@@ -23,17 +23,17 @@ func New(
 	protocol string,
 	serverID int64,
 	timeout time.Duration,
-) (Api, error) {
+) (*Api, error) {
 	u, err := url.Parse(baseUrl)
 	if err != nil {
-		return Api{}, err
+		return nil, err
 	}
 	cfg := client.DefaultTransportConfig()
 	cfg.Host = baseUrl
 	cfg.BasePath = u.Path
 	cfg.Schemes = []string{u.Scheme}
 	c := client.NewHTTPClientWithConfig(nil, cfg)
-	return Api{
+	return &Api{
 		c:         c.Server,
 		protocol:  protocol,
 		secretKey: key,
