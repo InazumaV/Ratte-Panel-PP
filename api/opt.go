@@ -63,7 +63,7 @@ func (e *ResponseHooker) ReadResponse(r runtime.ClientResponse, c runtime.Consum
 	return e.ClientResponseReader.ReadResponse(r, c)
 }
 
-func WithEtag(etag string) server.ClientOption {
+func WithEtag[t any](etag string) server.ClientOption {
 	return func(o *runtime.ClientOperation) {
 		if o == nil {
 			return
@@ -83,7 +83,7 @@ func WithEtag(etag string) server.ClientOption {
 			o.Reader,
 			func(r runtime.ClientResponse, c runtime.Consumer) (interface{}, error) {
 				if r.Code() == 304 {
-					return nil, nil
+					return (*t)(nil), nil
 				}
 				return r, nil
 			})

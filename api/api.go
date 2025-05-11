@@ -50,13 +50,15 @@ func (a *Api) GetServerConfig() (*models.GetServerConfigResponse, error) {
 		SecretKey: a.secretKey,
 		ServerID:  a.serverID,
 	}, a.timeout)
-
 	rsp, err := a.c.GetServerConfig(
 		req,
-		WithEtag(a.nodeEtag),
+		WithEtag[server.GetServerConfigOK](a.nodeEtag),
 	)
 	if err != nil {
 		return nil, err
+	}
+	if rsp == nil {
+		return nil, nil
 	}
 	if !rsp.IsSuccess() {
 		return nil, errors.New(rsp.Error())
@@ -70,9 +72,12 @@ func (a *Api) GetServerUserList() (*models.GetServerUserListResponse, error) {
 		SecretKey: a.secretKey,
 		ServerID:  a.serverID,
 	}, a.timeout)
-	rsp, err := a.c.GetServerUserList(reqV, WithEtag(a.userEtag))
+	rsp, err := a.c.GetServerUserList(reqV, WithEtag[server.GetServerUserListOK](a.userEtag))
 	if err != nil {
 		return nil, err
+	}
+	if rsp == nil {
+		return nil, nil
 	}
 	if !rsp.IsSuccess() {
 		return nil, errors.New(rsp.Error())
@@ -109,6 +114,7 @@ func (a *Api) ServerPushStatus(req *models.ServerPushStatusRequest) error {
 	if err != nil {
 		return err
 	}
+
 	if !rsp.IsSuccess() {
 		return errors.New(rsp.Error())
 	}
