@@ -11,7 +11,7 @@ type setAble interface {
 	SetTimeout(timeout time.Duration)
 }
 
-func SetTimeout[t setAble](a t, timeout time.Duration) t {
+func WithTimeout[t setAble](a t, timeout time.Duration) t {
 	a.SetTimeout(timeout)
 	return a
 }
@@ -26,7 +26,8 @@ func NewParamsHooker(
 	handle func(runtime.ClientRequest, strfmt.Registry) error,
 ) *RequestHooker {
 	return &RequestHooker{
-		handle: handle,
+		ClientRequestWriter: p,
+		handle:              handle,
 	}
 }
 
@@ -62,7 +63,7 @@ func (e *ResponseHooker) ReadResponse(r runtime.ClientResponse, c runtime.Consum
 	return e.ClientResponseReader.ReadResponse(r, c)
 }
 
-func ETagHook(etag string) server.ClientOption {
+func WithEtag(etag string) server.ClientOption {
 	return func(o *runtime.ClientOperation) {
 		if o == nil {
 			return

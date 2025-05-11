@@ -45,7 +45,7 @@ func New(
 }
 
 func (a *Api) GetServerConfig() (*models.GetServerConfigResponse, error) {
-	req := SetTimeout(&server.GetServerConfigParams{
+	req := WithTimeout(&server.GetServerConfigParams{
 		Protocol:  a.protocol,
 		SecretKey: a.secretKey,
 		ServerID:  a.serverID,
@@ -53,7 +53,7 @@ func (a *Api) GetServerConfig() (*models.GetServerConfigResponse, error) {
 
 	rsp, err := a.c.GetServerConfig(
 		req,
-		ETagHook(a.nodeEtag),
+		WithEtag(a.nodeEtag),
 	)
 	if err != nil {
 		return nil, err
@@ -65,12 +65,12 @@ func (a *Api) GetServerConfig() (*models.GetServerConfigResponse, error) {
 }
 
 func (a *Api) GetServerUserList() (*models.GetServerUserListResponse, error) {
-	reqV := SetTimeout(&server.GetServerUserListParams{
+	reqV := WithTimeout(&server.GetServerUserListParams{
 		Protocol:  a.protocol,
 		SecretKey: a.secretKey,
 		ServerID:  a.serverID,
 	}, a.timeout)
-	rsp, err := a.c.GetServerUserList(reqV, ETagHook(a.userEtag))
+	rsp, err := a.c.GetServerUserList(reqV, WithEtag(a.userEtag))
 	if err != nil {
 		return nil, err
 	}
@@ -81,7 +81,7 @@ func (a *Api) GetServerUserList() (*models.GetServerUserListResponse, error) {
 }
 
 func (a *Api) PushOnlineUsers(req *models.OnlineUsersRequest) error {
-	reqV := SetTimeout(&server.PushOnlineUsersParams{
+	reqV := WithTimeout(&server.PushOnlineUsersParams{
 		Body:      req,
 		Protocol:  a.protocol,
 		SecretKey: a.secretKey,
@@ -98,7 +98,7 @@ func (a *Api) PushOnlineUsers(req *models.OnlineUsersRequest) error {
 }
 
 func (a *Api) ServerPushStatus(req *models.ServerPushStatusRequest) error {
-	reqV := SetTimeout(&server.ServerPushStatusParams{
+	reqV := WithTimeout(&server.ServerPushStatusParams{
 		Body:      req,
 		Protocol:  a.protocol,
 		SecretKey: a.secretKey,
@@ -116,7 +116,7 @@ func (a *Api) ServerPushStatus(req *models.ServerPushStatusRequest) error {
 }
 
 func (a *Api) ServerPushUserTraffic(req *models.ServerPushUserTrafficRequest) error {
-	reqV := SetTimeout(&server.ServerPushUserTrafficParams{
+	reqV := WithTimeout(&server.ServerPushUserTrafficParams{
 		Body:      req,
 		Protocol:  a.protocol,
 		SecretKey: a.secretKey,
