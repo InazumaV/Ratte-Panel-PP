@@ -18,9 +18,7 @@ func (k KeyInt) String() string {
 }
 
 type Remote struct {
-	nodeEtag string
-	userEtag string
-	api      *api.Api
+	api *api.Api
 	*panel.AddRemoteParams
 }
 

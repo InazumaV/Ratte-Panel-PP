@@ -14,6 +14,8 @@ type Api struct {
 	protocol  string
 	secretKey string
 	serverID  int64
+	nodeEtag  string
+	userEtag  string
 	timeout   time.Duration
 }
 
@@ -43,13 +45,16 @@ func New(
 }
 
 func (a *Api) GetServerConfig() (*models.GetServerConfigResponse, error) {
+	req := SetTimeout(&server.GetServerConfigParams{
+		Protocol:  a.protocol,
+		SecretKey: a.secretKey,
+		ServerID:  a.serverID,
+	}, a.timeout)
+
 	rsp, err := a.c.GetServerConfig(
-		SetTimeout(&server.GetServerConfigParams{
-			Protocol:  a.protocol,
-			SecretKey: a.secretKey,
-			ServerID:  a.serverID,
-		},
-			a.timeout))
+		req,
+		ETagHook(a.nodeEtag),
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -60,13 +65,12 @@ func (a *Api) GetServerConfig() (*models.GetServerConfigResponse, error) {
 }
 
 func (a *Api) GetServerUserList() (*models.GetServerUserListResponse, error) {
-	rsp, err := a.c.GetServerUserList(
-		SetTimeout(&server.GetServerUserListParams{
-			Protocol:  a.protocol,
-			SecretKey: a.secretKey,
-			ServerID:  a.serverID,
-		},
-			a.timeout))
+	reqV := SetTimeout(&server.GetServerUserListParams{
+		Protocol:  a.protocol,
+		SecretKey: a.secretKey,
+		ServerID:  a.serverID,
+	}, a.timeout)
+	rsp, err := a.c.GetServerUserList(reqV, ETagHook(a.userEtag))
 	if err != nil {
 		return nil, err
 	}
@@ -77,14 +81,13 @@ func (a *Api) GetServerUserList() (*models.GetServerUserListResponse, error) {
 }
 
 func (a *Api) PushOnlineUsers(req *models.OnlineUsersRequest) error {
-	rsp, err := a.c.PushOnlineUsers(
-		SetTimeout(&server.PushOnlineUsersParams{
-			Body:      req,
-			Protocol:  a.protocol,
-			SecretKey: a.secretKey,
-			ServerID:  a.serverID,
-		},
-			a.timeout))
+	reqV := SetTimeout(&server.PushOnlineUsersParams{
+		Body:      req,
+		Protocol:  a.protocol,
+		SecretKey: a.secretKey,
+		ServerID:  a.serverID,
+	}, a.timeout)
+	rsp, err := a.c.PushOnlineUsers(reqV)
 	if err != nil {
 		return err
 	}
@@ -95,14 +98,14 @@ func (a *Api) PushOnlineUsers(req *models.OnlineUsersRequest) error {
 }
 
 func (a *Api) ServerPushStatus(req *models.ServerPushStatusRequest) error {
-	rsp, err := a.c.ServerPushStatus(
-		SetTimeout(&server.ServerPushStatusParams{
-			Body:      req,
-			Protocol:  a.protocol,
-			SecretKey: a.secretKey,
-			ServerID:  a.serverID,
-		},
-			a.timeout))
+	reqV := SetTimeout(&server.ServerPushStatusParams{
+		Body:      req,
+		Protocol:  a.protocol,
+		SecretKey: a.secretKey,
+		ServerID:  a.serverID,
+	},
+		a.timeout)
+	rsp, err := a.c.ServerPushStatus(reqV)
 	if err != nil {
 		return err
 	}
@@ -113,14 +116,14 @@ func (a *Api) ServerPushStatus(req *models.ServerPushStatusRequest) error {
 }
 
 func (a *Api) ServerPushUserTraffic(req *models.ServerPushUserTrafficRequest) error {
-	rsp, err := a.c.ServerPushUserTraffic(
-		SetTimeout(&server.ServerPushUserTrafficParams{
-			Body:      req,
-			Protocol:  a.protocol,
-			SecretKey: a.secretKey,
-			ServerID:  a.serverID,
-		},
-			a.timeout))
+	reqV := SetTimeout(&server.ServerPushUserTrafficParams{
+		Body:      req,
+		Protocol:  a.protocol,
+		SecretKey: a.secretKey,
+		ServerID:  a.serverID,
+	},
+		a.timeout)
+	rsp, err := a.c.ServerPushUserTraffic(reqV)
 	if err != nil {
 		return err
 	}
