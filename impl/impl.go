@@ -59,11 +59,96 @@ func (i Impl) DelRemote(id int) error {
 	return nil
 }
 
+func parseSecurity(t string, as *api.SecurityConfig, ps *params.SecurityConfig) {
+	switch t {
+	case "tls":
+		ps.TlsSettings = params.TlsSettings{
+			ServerName:    as.SNI,
+			AllowInsecure: *as.AllowInsecure,
+			Fingerprint:   as.Fingerprint,
+		}
+	case "reality":
+		ps.RealityConfig = params.RealityConfig{
+			ServerName: as.RealityServerAddress,
+			ServerPort: as.RealityServerPort,
+			ShortId:    as.RealityShortId,
+			PrivateKey: as.RealityPrivateKey,
+		}
+	}
+}
+
 func (i Impl) GetNodeInfo(id int) *panel.GetNodeInfoRsp {
 	r, _ := i.remotes.Get(KeyInt(id))
-	r.api.GetServerConfig()
-	//TODO implement me
-	panic("implement me")
+	c, err := r.api.GetServerConfig()
+	if err != nil {
+		return &panel.GetNodeInfoRsp{
+			Err: err,
+		}
+	}
+	p := panel.NodeInfo{
+		Type: c.Protocol,
+		Name: r.Name,
+		ExpandParams: params.ExpandParams{
+			CustomData: c.RawConfig,
+		},
+	}
+	switch c.Protocol {
+	case "vmess":
+		p.Host = c.VmessConfig.TransportConfig.Host
+		p.Port = c.VmessConfig.Port
+		p.Security = c.VmessConfig.Security
+		p.SecurityConfig = new(params.SecurityConfig)
+		parseSecurity(c.VmessConfig.Security, c.VmessConfig.SecurityConfig, p.SecurityConfig)
+		p.VMess = &params.VMess{
+			ExpandParams: params.ExpandParams{
+				Options: map[string]any{
+					"ServiceName": c.VmessConfig.TransportConfig.ServiceName,
+					"Path":        c.VmessConfig.TransportConfig.Path,
+				},
+			},
+			Network: c.VmessConfig.Network,
+		}
+	case "vless":
+		p.Host = c.VlessConfig.TransportConfig.Host
+		p.Port = c.VlessConfig.Port
+		p.Security = c.VlessConfig.Security
+		p.SecurityConfig = new(params.SecurityConfig)
+		parseSecurity(c.VlessConfig.Security, c.VlessConfig.SecurityConfig, p.SecurityConfig)
+		p.VLess = &params.VLess{
+			Flow: c.VlessConfig.Flow,
+			VMess: params.VMess{
+				ExpandParams: params.ExpandParams{
+					Options: map[string]any{
+						"ServiceName": c.VlessConfig.TransportConfig.ServiceName,
+						"Path":        c.VlessConfig.TransportConfig.Path,
+					},
+				},
+				Network: c.VmessConfig.Network,
+			},
+		}
+	case "shadowsocks":
+		p.Port = c.ShadowsocksConfig.Port
+		p.Shadowsocks = &params.Shadowsocks{
+			Cipher:    c.ShadowsocksConfig.Cipher,
+			ServerKey: c.ShadowsocksConfig.ServerKey,
+		}
+	case "trojan":
+		p.Port = c.TrojanConfig.Port
+		p.Host = c.TrojanConfig.TransportConfig.Host
+		p.Security = c.TrojanConfig.Security
+		p.SecurityConfig = new(params.SecurityConfig)
+		parseSecurity(c.TrojanConfig.Security, c.TrojanConfig.SecurityConfig, p.SecurityConfig)
+		p.Trojan = &params.Trojan{
+			Options: map[string]any{
+				"Path": c.TrojanConfig.TransportConfig.Path,
+			},
+		}
+	default:
+		panic("not supported")
+	}
+	return &panel.GetNodeInfoRsp{
+		NodeInfo: p,
+	}
 }
 
 func (i Impl) GetUserList(id int) *panel.GetUserListRsp {

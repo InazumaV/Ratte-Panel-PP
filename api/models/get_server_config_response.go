@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -25,7 +26,7 @@ type GetServerConfigResponse struct {
 
 	// config
 	// Required: true
-	Config interface{} `json:"config"`
+	Config json.RawMessage `json:"config"`
 
 	// protocol
 	// Required: true
