@@ -8,6 +8,10 @@ github.com/InazumaV/Ratte-Interface v0.0.0-20250515090009-9f3d027ff4f1 h1:D0Qtv5
 github.com/InazumaV/Ratte-Interface v0.0.0-20250515090009-9f3d027ff4f1/go.mod h1:UxqxslbpT8Q4qMldSNI6VCX5WFXWDbvE4fXpymp73kA=
 github.com/InazumaV/Ratte-Interface v0.0.0-20250515090242-0b9c063206c9 h1:AryNNys8AXqQCKDH6FRrIbLbAmcoF8xffE2Sf5jFOco=
 github.com/InazumaV/Ratte-Interface v0.0.0-20250515090242-0b9c063206c9/go.mod h1:UxqxslbpT8Q4qMldSNI6VCX5WFXWDbvE4fXpymp73kA=
+github.com/InazumaV/Ratte-Interface v0.0.0-20250518124232-6e81a7ef1f6b h1:7g4umf4UlsNNIE8FLh2J0vZPnGbMEpvfXdI05szHMbc=
+github.com/InazumaV/Ratte-Interface v0.0.0-20250518124232-6e81a7ef1f6b/go.mod h1:UxqxslbpT8Q4qMldSNI6VCX5WFXWDbvE4fXpymp73kA=
+github.com/InazumaV/Ratte-Interface v0.0.0-20250519063521-202abe204fd8 h1:WjSGJqB9zmNuJ0Iv0Exo6PdKHMnJ1Z2vdGb/Vc5X9l0=
+github.com/InazumaV/Ratte-Interface v0.0.0-20250519063521-202abe204fd8/go.mod h1:UxqxslbpT8Q4qMldSNI6VCX5WFXWDbvE4fXpymp73kA=
 github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 h1:DklsrG3dyBCFEj5IhUbnKptjxatkF07cF2ak3yi77so=
 github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2/go.mod h1:WaHUgvxTVq04UNunO+XhnAqY/wQc+bxr74GqbsZ/Jqw=
 github.com/bufbuild/protocompile v0.4.0 h1:LbFKd2XowZvQ/kajzguUp2DC9UEIQhIq77fZZlaQsNA=

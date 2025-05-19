@@ -3,7 +3,7 @@ module Ratte-Panel-PP
 go 1.24
 
 require (
-	github.com/InazumaV/Ratte-Interface v0.0.0-20250515090242-0b9c063206c9
+	github.com/InazumaV/Ratte-Interface v0.0.0-20250519063521-202abe204fd8
 	github.com/go-openapi/errors v0.22.1
 	github.com/go-openapi/runtime v0.28.0
 	github.com/go-openapi/strfmt v0.23.0

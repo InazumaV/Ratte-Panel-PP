@@ -4,6 +4,7 @@ import (
 	"Ratte-Panel-PP/api"
 	"Ratte-Panel-PP/api/models"
 	"Ratte-Panel-PP/status"
+	"errors"
 	"github.com/InazumaV/Ratte-Interface/panel"
 	"github.com/InazumaV/Ratte-Interface/params"
 	cmap "github.com/orcaman/concurrent-map/v2"
@@ -94,7 +95,6 @@ func (i Impl) GetNodeInfo(id int) *panel.GetNodeInfoRsp {
 	}
 	switch c.Protocol {
 	case "vmess":
-		p.Host = c.VmessConfig.TransportConfig.Host
 		p.Port = c.VmessConfig.Port
 		p.Security = c.VmessConfig.Security
 		p.SecurityConfig = new(params.SecurityConfig)
@@ -108,8 +108,19 @@ func (i Impl) GetNodeInfo(id int) *panel.GetNodeInfoRsp {
 			},
 			Network: c.VmessConfig.Network,
 		}
+		switch p.VLess.Network {
+		case "grpc":
+			p.VLess.NetworkSettings.Grpc = params.GrpcSettings{
+				Authority:   c.VlessConfig.TransportConfig.Host,
+				ServiceName: c.VlessConfig.TransportConfig.ServiceName,
+			}
+		case "ws":
+			p.VLess.NetworkSettings.Ws = params.WsSettings{
+				Host: c.VlessConfig.TransportConfig.Host,
+				Path: c.VlessConfig.TransportConfig.Path,
+			}
+		}
 	case "vless":
-		p.Host = c.VlessConfig.TransportConfig.Host
 		p.Port = c.VlessConfig.Port
 		p.Security = c.VlessConfig.Security
 		p.SecurityConfig = new(params.SecurityConfig)
@@ -126,6 +137,18 @@ func (i Impl) GetNodeInfo(id int) *panel.GetNodeInfoRsp {
 				Network: c.VmessConfig.Network,
 			},
 		}
+		switch p.VLess.Network {
+		case "grpc":
+			p.VLess.NetworkSettings.Grpc = params.GrpcSettings{
+				Authority:   c.VlessConfig.TransportConfig.Host,
+				ServiceName: c.VlessConfig.TransportConfig.ServiceName,
+			}
+		case "ws":
+			p.VLess.NetworkSettings.Ws = params.WsSettings{
+				Host: c.VlessConfig.TransportConfig.Host,
+				Path: c.VlessConfig.TransportConfig.Path,
+			}
+		}
 	case "shadowsocks":
 		p.Port = c.ShadowsocksConfig.Port
 		p.Shadowsocks = &params.Shadowsocks{
@@ -134,17 +157,16 @@ func (i Impl) GetNodeInfo(id int) *panel.GetNodeInfoRsp {
 		}
 	case "trojan":
 		p.Port = c.TrojanConfig.Port
-		p.Host = c.TrojanConfig.TransportConfig.Host
 		p.Security = c.TrojanConfig.Security
 		p.SecurityConfig = new(params.SecurityConfig)
 		parseSecurity(c.TrojanConfig.Security, c.TrojanConfig.SecurityConfig, p.SecurityConfig)
 		p.Trojan = &params.Trojan{
-			Options: map[string]any{
-				"Path": c.TrojanConfig.TransportConfig.Path,
-			},
+			Host: c.TrojanConfig.TransportConfig.Host,
 		}
 	default:
-		panic("not supported")
+		return &panel.GetNodeInfoRsp{
+			Err: errors.New("not supported"),
+		}
 	}
 	return &panel.GetNodeInfoRsp{
 		NodeInfo: p,
