@@ -27,6 +27,10 @@ type Impl struct {
 	remotes cmap.ConcurrentMap[KeyInt, *Remote]
 }
 
+func (i Impl) Type() string {
+	return "Ratte-Panel-PP"
+}
+
 func (i Impl) CustomMethod(method string, args any, reply *any) error {
 	//TODO implement me
 	panic("implement me")
@@ -100,12 +104,6 @@ func (i Impl) GetNodeInfo(id int) *panel.GetNodeInfoRsp {
 		p.SecurityConfig = new(params.SecurityConfig)
 		parseSecurity(c.VmessConfig.Security, c.VmessConfig.SecurityConfig, p.SecurityConfig)
 		p.VMess = &params.VMess{
-			ExpandParams: params.ExpandParams{
-				Options: map[string]any{
-					"ServiceName": c.VmessConfig.TransportConfig.ServiceName,
-					"Path":        c.VmessConfig.TransportConfig.Path,
-				},
-			},
 			Network: c.VmessConfig.Network,
 		}
 		switch p.VLess.Network {
@@ -126,16 +124,10 @@ func (i Impl) GetNodeInfo(id int) *panel.GetNodeInfoRsp {
 		p.SecurityConfig = new(params.SecurityConfig)
 		parseSecurity(c.VlessConfig.Security, c.VlessConfig.SecurityConfig, p.SecurityConfig)
 		p.VLess = &params.VLess{
-			Flow: c.VlessConfig.Flow,
 			VMess: params.VMess{
-				ExpandParams: params.ExpandParams{
-					Options: map[string]any{
-						"ServiceName": c.VlessConfig.TransportConfig.ServiceName,
-						"Path":        c.VlessConfig.TransportConfig.Path,
-					},
-				},
-				Network: c.VmessConfig.Network,
+				Network: c.VlessConfig.Network,
 			},
+			Flow: c.VlessConfig.Flow,
 		}
 		switch p.VLess.Network {
 		case "grpc":
